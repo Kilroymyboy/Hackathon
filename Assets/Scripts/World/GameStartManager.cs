@@ -26,7 +26,6 @@ public class GameStartManager : MonoBehaviour
 
         if (Input.GetButtonDown("Start"))
         {
-            WorldManager.Score = 0;
             SceneManager.LoadScene("MainScene");
         }
     }

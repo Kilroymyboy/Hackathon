@@ -11,10 +11,7 @@ during punching or projectile attacks, as well as damaging the enemy when the fi
 public class AttackController : MonoBehaviour
 {
     //Reference to the player GameObject
-    public GameObject CheeseHead;
-
-    //Reference to the projectile prefab
-    public GameObject Projectile;
+    public GameObject Player;
 
     //Stores player's fist position for start and end of punch motion
     float StartingPunchPosition;
@@ -27,9 +24,6 @@ public class AttackController : MonoBehaviour
     //Stores the position of the player's fist when attacking
     float PunchMotion;
 
-    //Stores the force value multiplier of the attack, used when striking the enemy
-    float AttackForce;
-
     //Used with MaxPause to handle pausing of the attack state
     float AttackPause;
 
@@ -41,7 +35,6 @@ public class AttackController : MonoBehaviour
     void Start()
     {
         PunchMotion = Mathf.Infinity;
-        AttackForce = 5;
         AttackPause = 1;
         Accumulator = 0.02f;
     }
@@ -55,25 +48,15 @@ public class AttackController : MonoBehaviour
         if (Input.GetButtonDown("Punch") && PlayerState.Instance.Attack == Attack.Passive)
         {
             PlayerState.Instance.Attack = Attack.Punch;
-            StartingPunchPosition = CheeseHead.transform.position.x;
+            StartingPunchPosition = Player.transform.position.x;
             EndingPunchPosition = StartingPunchPosition + (int)PlayerState.Instance.DirectionFacing * 0.7f;
 
             MaxPause = 10;
             GetComponents<AudioSource>()[0].Play();
         }
-        //Similar to the above punch attack handling, except in the case of peforming a projectile attack
-        else if (Input.GetButtonDown("Projectile") && PlayerState.Instance.Attack == Attack.Passive && GameObject.Find("Projectile(Clone)") == null)
-        {
-            PlayerState.Instance.Attack = Attack.Projectile;
-            StartingPunchPosition = CheeseHead.transform.position.x;
-            EndingPunchPosition = StartingPunchPosition + (int)PlayerState.Instance.DirectionFacing * 0.5f;
-
-            MaxPause = 20;
-            GetComponents<AudioSource>()[1].Play();
-        }
 
         //Handles the rest of the attack determined in the if...else if() above, playing out the attack according to the initial conditions set
-        if (PlayerState.Instance.Attack == Attack.Punch || PlayerState.Instance.Attack == Attack.Projectile)
+        if (PlayerState.Instance.Attack == Attack.Punch)
         {
             Accumulator += Time.deltaTime;
 
@@ -84,9 +67,6 @@ public class AttackController : MonoBehaviour
 
             if (AttackPause > MaxPause)
             {
-                if (PlayerState.Instance.Attack == Attack.Projectile)
-                    GameObject.Instantiate(Projectile);
-
                 AttackPause = 1;
                 Accumulator = 0.02f;
                 Recoiling = true;
@@ -111,7 +91,7 @@ public class AttackController : MonoBehaviour
                 }
             }
 
-            transform.position = new Vector3(PunchMotion, CheeseHead.transform.position.y, transform.position.z);
+            transform.position = new Vector3(PunchMotion, Player.transform.position.y, transform.position.z);
 
             GetComponent<SpriteRenderer>().enabled = true;
         }
@@ -124,14 +104,6 @@ public class AttackController : MonoBehaviour
     //Detects collision between player's fist and enemy, awards points and adds force to the enemy accordingly
     void OnCollisionEnter2D(Collision2D coll)
     {
-        if (coll.gameObject.tag == "Enemy")
-        {
-            Rigidbody2D enemy = coll.gameObject.GetComponent<Rigidbody2D>();
-            enemy.velocity = new Vector2(0, 0);
-            enemy.AddForce(new Vector2((float)PlayerState.Instance.DirectionFacing * AttackForce, AttackForce), ForceMode2D.Impulse);
 
-            enemy.GetComponent<Enemy>().DoDamage(2);
-            WorldManager.Score += 200;
-        }   
     }
 }

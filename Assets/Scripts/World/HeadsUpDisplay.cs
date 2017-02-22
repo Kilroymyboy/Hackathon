@@ -26,12 +26,8 @@ public class HeadsUpDisplay : MonoBehaviour
     {
         ScaleFontSize();
 
-        GUI.Label(new Rect(Screen.width / 85f, Screen.height / 58, Screen.width, Screen.height),
-            string.Format("SCORE: {0}", WorldManager.Score.ToString()), FontStyle
-            );
-
         GUI.Label(new Rect(Screen.width / 85f, Screen.height / 20, Screen.width, Screen.height),
-            string.Format("LEVEL: {0}", (WorldManager.Level - 4).ToString()), FontStyle
+            string.Format("LEVEL: {0}", WorldManager.Level.ToString()), FontStyle
             );
     }
 

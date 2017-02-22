@@ -14,7 +14,7 @@ If the player stops moving, the camera recenters on the player and stops recente
 public class CameraController : MonoBehaviour
 {
     //Reference to the player GameObject
-    public GameObject CheeseHead;
+    public GameObject Player;
 
     //Stores an exclusive CameraState for moving the camera accordingly
     public CameraState CameraState;
@@ -27,8 +27,8 @@ public class CameraController : MonoBehaviour
     //Handles camera motion based on where the player is on the screen and the current state the camera is in
     void LateUpdate()
     {
-        float offset = Camera.main.orthographicSize * Camera.main.aspect / 2;
-        Vector3 CheeseScreenPosition = Camera.main.WorldToViewportPoint(CheeseHead.transform.position);
+        float offset = Camera.main.orthographicSize * Camera.main.aspect / 4;
+        Vector3 CheeseScreenPosition = Camera.main.WorldToViewportPoint(Player.transform.position);
 
         if (CheeseScreenPosition.x < 0.25f || CheeseScreenPosition.x > 0.75f)
             CameraState = CameraState.Following;
@@ -36,11 +36,11 @@ public class CameraController : MonoBehaviour
         if (CameraState == CameraState.Following && PlayerState.Instance.Horizontal == Horizontal.Idle)
             CameraState = CameraState.Recentering;
         else if (CameraState == CameraState.Following)
-            transform.position = new Vector3(CheeseHead.transform.position.x - offset * (int)PlayerState.Instance.DirectionFacing, transform.position.y, transform.position.z);
+            transform.position = new Vector3(Player.transform.position.x - offset * (int)PlayerState.Instance.DirectionFacing, transform.position.y, transform.position.z);
 
         if (CameraState == CameraState.Recentering)
         {
-            float x = Mathf.Lerp(transform.position.x, CheeseHead.transform.position.x, 0.02f * Time.deltaTime * 60);
+            float x = Mathf.Lerp(transform.position.x, Player.transform.position.x, 0.02f * Time.deltaTime * 60);
             transform.position = new Vector3(x, transform.position.y, transform.position.z);
 
             if (Math.Round(CheeseScreenPosition.x, 1) == 0.5f)
