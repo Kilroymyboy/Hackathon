@@ -39,8 +39,6 @@ public class CameraController : MonoBehaviour
             float x = Mathf.Lerp(transform.position.x, Player.transform.position.x+2, 0.02f * Time.deltaTime * 60);
             transform.position = new Vector3(x, transform.position.y, transform.position.z);
 
-
-            print(Math.Round(CheeseScreenPosition.x, 2).ToString());
             if (Math.Round(CheeseScreenPosition.x, 2) <= 0.67)
                 CameraState = CameraState.Stationary;
         }
