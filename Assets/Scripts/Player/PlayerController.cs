@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 #region - Script Synopsis
 /*
@@ -50,15 +51,34 @@ public class PlayerController : MonoBehaviour
         if (hit.collider != null)
         {
             float distance = Mathf.Abs(hit.point.x - transform.position.x);
-            print(distance);
+            if(distance <= 0.6f)
+            {
+                collisionHandler(hit.collider.gameObject.tag);
+            }
         }
 
         WalkMotion();
         JumpMotion();
     }
 
+    private void collisionHandler(string tag)
+    {
+        if (tag.Equals("Box"))
+        {
+
+        }
+        else if (tag.Equals("Tree"))
+        {
+
+        }
+        else //Stairs is implied
+        {
+
+        }
+    }
+
     //Used to detect player inputs and set parameters & players states for physics behaviour that occurs in FixedUpdate()
-	void Update()
+    void Update()
 	{
         //Allow player movement only when not attacking
         if (PlayerState.Instance.Attack != Attack.Passive)
