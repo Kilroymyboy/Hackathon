@@ -49,8 +49,6 @@ public class PlayerController : MonoBehaviour
     //Used to detect player inputs and set parameters & players states for physics behaviour that occurs in FixedUpdate()
 	void Update()
 	{
-        SpookedCheck();
-
         //Allow player movement only when not attacking
         if (PlayerState.Instance.Attack != Attack.Passive)
         {
@@ -100,36 +98,6 @@ public class PlayerController : MonoBehaviour
                 GetComponent<AudioSource>().Play();
             }
             JumpActivated = false;
-        }
-    }
-
-    //Specific method to handle when player is "spooked" (slowing player and turning green) when colliding with the Ghost enemy type
-    private void SpookedCheck()
-    {
-        int lerpTo;
-        float lerpSpeed;
-
-        if (IsSpooked)
-        {
-            SpookTimer += Time.deltaTime * 60;
-            lerpTo = 0;
-            lerpSpeed = 0.6f;
-        }
-        else
-        {
-            lerpTo = 1;
-            lerpSpeed = 0.8f;
-        }
-
-        SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>();
-        foreach (SpriteRenderer renderer in renderers)
-            renderer.color = Color.Lerp(renderer.color, new Color(lerpTo, 1, 1, 1), lerpSpeed * Time.deltaTime);
-
-        if (SpookTimer > 180)
-        {
-            SpookTimer = 0;
-            MoveSpeed = 3;
-            IsSpooked = false;
         }
     }
 }
