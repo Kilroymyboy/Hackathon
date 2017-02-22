@@ -50,7 +50,36 @@ public class PlayerController : MonoBehaviour
         if (hit.collider != null)
         {
             float distance = Mathf.Abs(hit.point.x - transform.position.x);
-            print(distance);
+            Rigidbody2D rigBod = hit.rigidbody;
+
+            if (hit.collider.tag == "Box")
+            {
+               
+                //bool push = true;
+                
+                if (PlayerState.Instance.Attack == Attack.Punch)
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezeRotation;   
+                }
+                else
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+                
+                }
+            }
+            if (hit.collider.tag == "Tree")
+            {
+                
+                if (PlayerState.Instance.Attack == Attack.Punch)
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezeRotation;
+                }
+                else
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+                }
+                print(distance);
+            }
         }
 
         WalkMotion();

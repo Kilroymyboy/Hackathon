@@ -35,7 +35,7 @@ public class AttackController : MonoBehaviour
     void Start()
     {
         PunchMotion = Mathf.Infinity;
-        AttackPause = 1;
+        AttackPause = 0.5f;
         Accumulator = 0.02f;
     }
 
@@ -101,6 +101,6 @@ public class AttackController : MonoBehaviour
     //Detects collision between player's fist and enemy, awards points and adds force to the enemy accordingly
     void OnCollisionEnter2D(Collision2D coll)
     {
-
+        coll.rigidbody.AddForce(new Vector2(3.0f, 0.0f), ForceMode2D.Impulse);
     }
 }
