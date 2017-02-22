@@ -32,8 +32,17 @@ public class PlayerController : MonoBehaviour
     // used for runnin into walls
     RaycastHit2D hit;
 
-	void Start()
-	{
+    private CommandRunner cmd;
+    private int i = 0;
+    private System.Collections.Generic.List<string[]> str;
+
+    private string[] strArr = {"IF Nothing Walk", "IF Nothing Walk", "IF Box Push", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Box Push", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Stairs Climb", "IF Stairs Climb", "IF Stairs Climb", "IF Nothing Walk" };
+    void Start()
+    {
+         
+        cmd = new CommandRunner(strArr);
+        str = cmd.getCommands();
+
         HorizontalMotion = 0;
         MoveSpeed = 3;
 
@@ -48,49 +57,15 @@ public class PlayerController : MonoBehaviour
     //Calls methods that handle physics-based movement
     void FixedUpdate()
     {
-       /*
-        RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.3f), transform.position.y), new Vector2(1, 0));
-        if (hit.collider != null)
+
+        if (i < strArr.Length && PlayerState.Instance.Horizontal == Horizontal.Idle && PlayerState.Instance.Vertical == Vertical.Grounded && PlayerState.Instance.Attack == Attack.Passive)
         {
-            float distance = Mathf.Abs(hit.point.x - transform.position.x);
-            Rigidbody2D rigBod = hit.rigidbody;
-
-            if (hit.collider.tag == "Box")
-            {
-
-                //bool push = true;
-
-                if (PlayerState.Instance.Attack == Attack.Punch)
-                {
-                    rigBod.constraints = RigidbodyConstraints2D.FreezeRotation;
-                }
-                else
-                {
-                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
-
-                }
-                print(distance);
-            }
-            else if (hit.collider.tag == "Tree")
-            {
-
-                if (PlayerState.Instance.Attack == Attack.Punch)
-                {
-                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
-                    rigBod.rotation = -60;
-                    //Destroy(rigBod);
-                }
-                else
-                {
-                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
-                }
-                print(distance);
-
-            }
+            cmd.callCommand(str[i]);
+            i++;
         }
-        */
         WalkMotion();
         JumpMotion();
+        
     }
 
     //Used to detect player inputs and set parameters & players states for physics behaviour that occurs in FixedUpdate()
@@ -108,8 +83,10 @@ public class PlayerController : MonoBehaviour
 
             if (HorizontalMotion != 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight && PlayerState.Instance.Vertical != Vertical.Airborne)
             {
-                startPos = transform.position;
-                PlayerState.Instance.DirectionFacing = (DirectionFacing)HorizontalMotion;
+
+
+                PlayerState.Instance.DirectionFacing = (DirectionFacing)1.0f;
+
                 PlayerState.Instance.Horizontal = Horizontal.MovingRight;
                 moveTo = transform.position.x + 1.02f;
             }
@@ -164,6 +141,19 @@ public class PlayerController : MonoBehaviour
         //CheesyBody.velocity = new Vector2(HorizontalMotion * MoveSpeed, CheesyBody.velocity.y);
     }
 
+    private void WalkMotion2()
+    {
+        startPos = transform.position;
+        if (HorizontalMotion == 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight && PlayerState.Instance.Vertical != Vertical.Airborne)
+        {
+            PlayerState.Instance.DirectionFacing = (DirectionFacing)1.0f;
+            PlayerState.Instance.Horizontal = Horizontal.MovingRight;
+            moveTo = transform.position.x + 1.01f;
+        }
+
+        //CheesyBody.velocity = new Vector2(HorizontalMotion * MoveSpeed, CheesyBody.velocity.y);
+    }
+
     //Handles player's vertical state and allows jumping only when grounded, using physics-based AddForce(), called in FixedUpdate()
     private void JumpMotion()
     {
@@ -188,5 +178,21 @@ public class PlayerController : MonoBehaviour
             float x = Mathf.Lerp(transform.position.x, moveTo, 0.05f * Time.deltaTime * 60);
             transform.position = new Vector3(x, transform.position.y, transform.position.z);
         }
+    }
+
+
+    private void JumpMotion2()
+    {
+        if (PlayerState.Instance.Vertical != Vertical.Airborne && PlayerState.Instance.Horizontal != Horizontal.MovingRight)
+        {
+            JumpActivated = true;
+            moveTo = transform.position.x + 1.0f;
+            JumpOver = false;
+        }
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+
     }
 }

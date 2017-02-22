@@ -52,7 +52,9 @@ public class CameraController : MonoBehaviour
 
         if(CheeseScreenPosition.y > 0.8)
         {
-            float y = Mathf.Lerp(transform.position.y, cameraOrigin + 0.8f, 0.05f * Time.deltaTime * 60);
+
+            float y = Mathf.Lerp(transform.position.y, cameraOrigin + 1.0f, 0.05f * Time.deltaTime * 60);
+            System.Math.Round(y, 1);
             transform.position = new Vector3(transform.position.x, y, transform.position.z);
             //transform.position = cameraOrigin + new Vector3(0, 0.5f, 0);
         }
