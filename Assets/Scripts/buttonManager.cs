@@ -32,7 +32,7 @@ public class buttonManager : MonoBehaviour {
 
     public void onTestClick()
     {
-        hud.displayClause();
+        hud.testClause();
     }
 
     public void onIfClick()
