@@ -49,8 +49,6 @@ public class PlayerController : MonoBehaviour
     //Used to detect player inputs and set parameters & players states for physics behaviour that occurs in FixedUpdate()
 	void Update()
 	{
-        SpookedCheck();
-
         //Allow player movement only when not attacking
         if (PlayerState.Instance.Attack != Attack.Passive)
         {
@@ -102,7 +100,6 @@ public class PlayerController : MonoBehaviour
             JumpActivated = false;
         }
     }
-
     //Specific method to handle when player is "spooked" (slowing player and turning green) when colliding with the Ghost enemy type
     private void SpookedCheck()
     {
