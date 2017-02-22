@@ -22,10 +22,6 @@ public class PlayerController : MonoBehaviour
     //Used along with HorizontalMotion multiplier to create horizontal movement
     public static int MoveSpeed;
 
-    //Special fields that store player's "spooked" state when colliding with a Ghost enemy, expiring when a timer limit is reached
-    public static bool IsSpooked;
-    float SpookTimer;
-
 	void Start()
 	{
         HorizontalMotion = 0;
@@ -61,6 +57,8 @@ public class PlayerController : MonoBehaviour
 
             if (HorizontalMotion != 0)
             {
+                //float x = Mathf.Lerp(transform.position.x, Player.transform.position.x + 2, 0.02f * Time.deltaTime * 60);
+
                 transform.localScale = new Vector3(HorizontalMotion, 1, 1);
                 PlayerState.Instance.DirectionFacing = (DirectionFacing)HorizontalMotion;
             }
