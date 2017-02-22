@@ -30,12 +30,13 @@ public class PlayerController : MonoBehaviour
     public static int MoveSpeed;
 
     private CommandRunner cmd;
-    private int i = 1;
+    private int i = 0;
     private System.Collections.Generic.List<string[]> str;
 
+    private string[] strArr = {"IF Nothing Walk", "IF Box Push", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Box Push", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Stairs Climb", "IF Stairs Climb", "IF Stairs Climb", "IF Nothing Walk" };
     void Start()
     {
-        string[] strArr = { "IF Nothing Walk", "IF Box Push"};
+         
         cmd = new CommandRunner(strArr);
         str = cmd.getCommands();
 
@@ -53,16 +54,14 @@ public class PlayerController : MonoBehaviour
     //Calls methods that handle physics-based movement
     void FixedUpdate()
     {
-
             
 
-        if (i >= 0 && PlayerState.Instance.Horizontal == Horizontal.Idle && PlayerState.Instance.Vertical == Vertical.Grounded)
+        if (i < strArr.Length && PlayerState.Instance.Horizontal == Horizontal.Idle && PlayerState.Instance.Vertical == Vertical.Grounded && PlayerState.Instance.Attack == Attack.Passive)
         {
-            HorizontalMotion = 0;
             print(str[i][0]);
             print(PlayerState.Instance.Attack);
             cmd.callCommand(str[i]);
-            i--;
+            i++;
         }
         
         /*
@@ -126,7 +125,7 @@ public class PlayerController : MonoBehaviour
 
             if (HorizontalMotion != 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight && PlayerState.Instance.Vertical != Vertical.Airborne)
             {
-                PlayerState.Instance.DirectionFacing = (DirectionFacing)HorizontalMotion;
+                PlayerState.Instance.DirectionFacing = (DirectionFacing)1.0f;
                 PlayerState.Instance.Horizontal = Horizontal.MovingRight;
                 moveTo = transform.position.x + 1.01f;
             }
@@ -175,7 +174,7 @@ public class PlayerController : MonoBehaviour
     {
         if (HorizontalMotion == 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight && PlayerState.Instance.Vertical != Vertical.Airborne)
         {
-            PlayerState.Instance.DirectionFacing = (DirectionFacing)HorizontalMotion;
+            PlayerState.Instance.DirectionFacing = (DirectionFacing)1.0f;
             PlayerState.Instance.Horizontal = Horizontal.MovingRight;
             moveTo = transform.position.x + 1.01f;
         }
