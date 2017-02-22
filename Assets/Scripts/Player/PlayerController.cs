@@ -29,6 +29,9 @@ public class PlayerController : MonoBehaviour
     //Used along with HorizontalMotion multiplier to create horizontal movement
     public static int MoveSpeed;
 
+    // used for runnin into walls
+    RaycastHit2D hit;
+
 	void Start()
 	{
         HorizontalMotion = 0;
@@ -40,12 +43,12 @@ public class PlayerController : MonoBehaviour
         PlayerState.Instance.Vertical = Vertical.Airborne;
         PlayerState.Instance.DirectionFacing = DirectionFacing.Right;
         PlayerState.Instance.Attack = Attack.Passive;
-	}
+    }
 
     //Calls methods that handle physics-based movement
     void FixedUpdate()
     {
-        /*
+       /*
         RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.3f), transform.position.y), new Vector2(1, 0));
         if (hit.collider != null)
         {
@@ -105,13 +108,15 @@ public class PlayerController : MonoBehaviour
 
             if (HorizontalMotion != 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight && PlayerState.Instance.Vertical != Vertical.Airborne)
             {
+                startPos = transform.position;
                 PlayerState.Instance.DirectionFacing = (DirectionFacing)HorizontalMotion;
                 PlayerState.Instance.Horizontal = Horizontal.MovingRight;
-                moveTo = transform.position.x + 1.01f;
+                moveTo = transform.position.x + 1.02f;
             }
 
             if (Input.GetButtonDown("Jump") && PlayerState.Instance.Vertical != Vertical.Airborne && PlayerState.Instance.Horizontal != Horizontal.MovingRight)
             {
+                startPos = transform.position;
                 JumpActivated = true;
                 moveTo = transform.position.x + 1.0f;
                 JumpOver = false;
@@ -133,6 +138,8 @@ public class PlayerController : MonoBehaviour
     private void WalkMotion()
     {
         float prevPos = transform.position.x;
+        RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.3f), transform.position.y), new Vector2(1, 0));
+
 
         if (PlayerState.Instance.Horizontal == Horizontal.MovingRight)
         {
@@ -146,6 +153,13 @@ public class PlayerController : MonoBehaviour
         {
             PlayerState.Instance.Horizontal = Horizontal.Idle;
         }
+        
+        if (PlayerState.Instance.Vertical != Vertical.Airborne && hit.collider.tag != "Fist" && hit.distance == 0.0f)
+        {
+            transform.position = startPos;
+
+            PlayerState.Instance.Horizontal = Horizontal.Idle;
+        }
 
         //CheesyBody.velocity = new Vector2(HorizontalMotion * MoveSpeed, CheesyBody.velocity.y);
     }
@@ -153,6 +167,7 @@ public class PlayerController : MonoBehaviour
     //Handles player's vertical state and allows jumping only when grounded, using physics-based AddForce(), called in FixedUpdate()
     private void JumpMotion()
     {
+
         if (JumpActivated)
         {
             if (PlayerState.Instance.Vertical == Vertical.Grounded)
@@ -160,10 +175,9 @@ public class PlayerController : MonoBehaviour
                 PlayerState.Instance.Vertical = Vertical.Airborne;
                 CheesyBody.AddForce(new Vector2(0, 8), ForceMode2D.Impulse);
                 GetComponent<AudioSource>().Play();
-                startPos = transform.position;
             }
 
-            if (transform.position.y - startPos.y > .7)
+            if (transform.position.y - startPos.y > .9)
             {
                 JumpOver = true;
                 JumpActivated = false;
@@ -173,14 +187,6 @@ public class PlayerController : MonoBehaviour
         {
             float x = Mathf.Lerp(transform.position.x, moveTo, 0.05f * Time.deltaTime * 60);
             transform.position = new Vector3(x, transform.position.y, transform.position.z);
-        }
-    }
-
-    public void OnCollisionEnter2D(Collision collision)
-    {
-        if(collision.gameObject.tag == "")
-        {
-
         }
     }
 }
