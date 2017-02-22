@@ -45,8 +45,8 @@ public class PlayerController : MonoBehaviour
     //Calls methods that handle physics-based movement
     void FixedUpdate()
     {
-
-        RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.4f),transform.position.y), Vector2.right);
+        /*
+        RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.3f), transform.position.y), new Vector2(1, 0));
         if (hit.collider != null)
         {
             float distance = Mathf.Abs(hit.point.x - transform.position.x);
@@ -54,22 +54,9 @@ public class PlayerController : MonoBehaviour
 
             if (hit.collider.tag == "Box")
             {
-               
+
                 //bool push = true;
-                
-                if (PlayerState.Instance.Attack == Attack.Punch)
-                {
-                    rigBod.constraints = RigidbodyConstraints2D.FreezeRotation;   
-                }
-                else
-                {
-                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
-                
-                }
-            }
-            if (hit.collider.tag == "Tree")
-            {
-                
+
                 if (PlayerState.Instance.Attack == Attack.Punch)
                 {
                     rigBod.constraints = RigidbodyConstraints2D.FreezeRotation;
@@ -77,11 +64,28 @@ public class PlayerController : MonoBehaviour
                 else
                 {
                     rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+
                 }
                 print(distance);
             }
-        }
+            else if (hit.collider.tag == "Tree")
+            {
 
+                if (PlayerState.Instance.Attack == Attack.Punch)
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
+                    rigBod.rotation = -60;
+                    //Destroy(rigBod);
+                }
+                else
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+                }
+                print(distance);
+
+            }
+        }
+        */
         WalkMotion();
         JumpMotion();
     }
@@ -160,7 +164,6 @@ public class PlayerController : MonoBehaviour
                 startPos = transform.position;
             }
 
-            print(startPos.y - transform.position.y);
             if (transform.position.y - startPos.y > .7)
             {
                 JumpOver = true;
@@ -171,7 +174,7 @@ public class PlayerController : MonoBehaviour
         {
             float x = Mathf.Lerp(transform.position.x, moveTo, 0.05f * Time.deltaTime * 60);
             transform.position = new Vector3(x, transform.position.y, transform.position.z);
-            print(transform.position.x - startPos.x);
+         
         }
     }
 
