@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
     //Used along with HorizontalMotion multiplier to create horizontal movement
     public static int MoveSpeed;
 
-    void Start()
+	void Start()
 	{
         HorizontalMotion = 0;
         MoveSpeed = 3;
@@ -37,20 +37,7 @@ public class PlayerController : MonoBehaviour
 
     //Calls methods that handle physics-based movement
     void FixedUpdate()
-    { 
-        RaycastHit2D hit = Physics2D.Raycast(new Vector2(transform.position.x + 0.4f, transform.position.y), Vector2.right * 2);
-        if (hit.collider != null)
-        {
-            float distance = Mathf.Abs(hit.point.x - transform.position.x);
-
-            
-            if(hit.collider.tag == "Box")
-            {
-                print(distance);
-            }
-
-        }
-
+    {
         WalkMotion();
         JumpMotion();
     }
@@ -112,7 +99,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision collision)
+    public void OnCollisionEnter2D(Collision collision)
     {
+        if(collision.gameObject.tag == "")
+        {
+
+        }
     }
 }
