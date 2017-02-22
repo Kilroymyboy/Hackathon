@@ -103,17 +103,17 @@ public class PlayerController : MonoBehaviour
         {
             HorizontalMotion = Input.GetAxisRaw("Horizontal");
 
-            if (HorizontalMotion != 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight)
+            if (HorizontalMotion != 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight && PlayerState.Instance.Vertical != Vertical.Airborne)
             {
                 PlayerState.Instance.DirectionFacing = (DirectionFacing)HorizontalMotion;
                 PlayerState.Instance.Horizontal = Horizontal.MovingRight;
-                moveTo = transform.position.x + 1;
+                moveTo = transform.position.x + 1.01f;
             }
 
-            if (Input.GetButtonDown("Jump"))
+            if (Input.GetButtonDown("Jump") && PlayerState.Instance.Vertical != Vertical.Airborne && PlayerState.Instance.Horizontal != Horizontal.MovingRight)
             {
                 JumpActivated = true;
-                moveTo = transform.position.x + 1;
+                moveTo = transform.position.x + 1.0f;
                 JumpOver = false;
             }
 
@@ -126,8 +126,7 @@ public class PlayerController : MonoBehaviour
         //Horizontal currentMotion = PlayerState.Instance.Horizontal = (Horizontal)HorizontalMotion;
 
         //Fixes an error with the camera following the player incorrectly if quickly changing direction while at the furthest possible positions at each side of the screen.
-        //if ((int)previousMotion * (int)currentMotion == -1)
-            
+        //if ((int)previousMotion * (int)currentMotion == -1)  
     }
 
     //Handles basic horizontal movement using physics-based velocity, called in FixedUpdate()
@@ -159,7 +158,7 @@ public class PlayerController : MonoBehaviour
             if (PlayerState.Instance.Vertical == Vertical.Grounded)
             {
                 PlayerState.Instance.Vertical = Vertical.Airborne;
-                CheesyBody.AddForce(new Vector2(0, 6), ForceMode2D.Impulse);
+                CheesyBody.AddForce(new Vector2(0, 8), ForceMode2D.Impulse);
                 GetComponent<AudioSource>().Play();
                 startPos = transform.position;
             }
@@ -174,7 +173,6 @@ public class PlayerController : MonoBehaviour
         {
             float x = Mathf.Lerp(transform.position.x, moveTo, 0.05f * Time.deltaTime * 60);
             transform.position = new Vector3(x, transform.position.y, transform.position.z);
-         
         }
     }
 
