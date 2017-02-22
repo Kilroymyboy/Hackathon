@@ -132,4 +132,12 @@ public class PlayerController : MonoBehaviour
             IsSpooked = false;
         }
     }
+
+    public void OnCollisionEnter2D(Collision collision)
+    {
+        if(collision.gameObject.tag == "")
+        {
+
+        }
+    }
 }
