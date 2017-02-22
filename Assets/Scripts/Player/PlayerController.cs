@@ -71,35 +71,7 @@ public class PlayerController : MonoBehaviour
     //Used to detect player inputs and set parameters & players states for physics behaviour that occurs in FixedUpdate()
 	void Update()
 	{
-        //Allow player movement only when not attacking
-        if (PlayerState.Instance.Attack != Attack.Passive)
-        {
-            CheesyBody.velocity = new Vector2(0, 0.1f);
-            HorizontalMotion = 0;
-        }
-        else
-        {
-            HorizontalMotion = Input.GetAxisRaw("Horizontal");
 
-            if (HorizontalMotion != 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight && PlayerState.Instance.Vertical != Vertical.Airborne)
-            {
-
-
-                PlayerState.Instance.DirectionFacing = (DirectionFacing)1.0f;
-
-                PlayerState.Instance.Horizontal = Horizontal.MovingRight;
-                moveTo = transform.position.x + 1.02f;
-            }
-
-            if (Input.GetButtonDown("Jump") && PlayerState.Instance.Vertical != Vertical.Airborne && PlayerState.Instance.Horizontal != Horizontal.MovingRight)
-            {
-                startPos = transform.position;
-                JumpActivated = true;
-                moveTo = transform.position.x + 1.0f;
-                JumpOver = false;
-            }
-
-        }
 
         if (CheesyBody.velocity.y == 0 && PlayerState.Instance.Attack == Attack.Passive)
             PlayerState.Instance.Vertical = Vertical.Grounded;

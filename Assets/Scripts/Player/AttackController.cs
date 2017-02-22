@@ -41,16 +41,6 @@ public class AttackController : MonoBehaviour
 
 	void Update()
 	{
-        //Handles initial conditions and state keeping of the punch attack (also prevents interrupting/cancelling the attack)
-        if (Input.GetButtonDown("Punch") && PlayerState.Instance.Attack == Attack.Passive)
-        {
-            PlayerState.Instance.Attack = Attack.Punch;
-            StartingPunchPosition = Player.transform.position.x;
-            EndingPunchPosition = StartingPunchPosition + (int)PlayerState.Instance.DirectionFacing * 0.7f;
-
-            MaxPause = 10;
-            GetComponents<AudioSource>()[0].Play();
-        }
 
         //Handles the rest of the attack determined in the if...else if() above, playing out the attack according to the initial conditions set
         if (PlayerState.Instance.Attack == Attack.Punch)
