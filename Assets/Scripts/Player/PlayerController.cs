@@ -18,6 +18,13 @@ public class PlayerController : MonoBehaviour
 
     //Stores if jump button is pressed in Update loop, then acts on it with a physics event in the FixedUpdate loop
     bool JumpActivated;
+    bool JumpOver;
+
+    // tells the player where to move
+    float moveTo;
+
+    // gets start pos
+    Vector2 startPos;
 
     //Used along with HorizontalMotion multiplier to create horizontal movement
     public static int MoveSpeed;
@@ -55,33 +62,52 @@ public class PlayerController : MonoBehaviour
         {
             HorizontalMotion = Input.GetAxisRaw("Horizontal");
 
-            if (HorizontalMotion != 0)
+            if (HorizontalMotion != 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight)
             {
-                //float x = Mathf.Lerp(transform.position.x, Player.transform.position.x + 2, 0.02f * Time.deltaTime * 60);
-
-                transform.localScale = new Vector3(HorizontalMotion, 1, 1);
                 PlayerState.Instance.DirectionFacing = (DirectionFacing)HorizontalMotion;
+                PlayerState.Instance.Horizontal = Horizontal.MovingRight;
+                moveTo = transform.position.x + 1;
             }
 
             if (Input.GetButtonDown("Jump"))
+            {
                 JumpActivated = true;
+                moveTo = transform.position.x + 1;
+                JumpOver = false;
+            }
+
         }
 
         if (CheesyBody.velocity.y == 0 && PlayerState.Instance.Attack == Attack.Passive)
             PlayerState.Instance.Vertical = Vertical.Grounded;
 
-        Horizontal previousMotion = PlayerState.Instance.Horizontal;
-        Horizontal currentMotion = PlayerState.Instance.Horizontal = (Horizontal)HorizontalMotion;
+        //Horizontal previousMotion = PlayerState.Instance.Horizontal;
+        //Horizontal currentMotion = PlayerState.Instance.Horizontal = (Horizontal)HorizontalMotion;
 
         //Fixes an error with the camera following the player incorrectly if quickly changing direction while at the furthest possible positions at each side of the screen.
-        if ((int)previousMotion * (int)currentMotion == -1)
-            PlayerState.Instance.Horizontal = Horizontal.Idle;
-	}
+        //if ((int)previousMotion * (int)currentMotion == -1)
+            
+    }
 
     //Handles basic horizontal movement using physics-based velocity, called in FixedUpdate()
     private void WalkMotion()
     {
-        CheesyBody.velocity = new Vector2(HorizontalMotion * MoveSpeed, CheesyBody.velocity.y);
+        float prevPos = transform.position.x;
+
+        if (PlayerState.Instance.Horizontal == Horizontal.MovingRight)
+        {
+            float x = Mathf.Lerp(transform.position.x, moveTo, 0.05f * Time.deltaTime * 60);
+            transform.position = new Vector3(x, transform.position.y, transform.position.z);
+        }
+
+        float currPos = transform.position.x;
+
+        if (System.Math.Round(currPos - prevPos, 3) < 0.002)
+        {
+            PlayerState.Instance.Horizontal = Horizontal.Idle;
+        }
+
+        //CheesyBody.velocity = new Vector2(HorizontalMotion * MoveSpeed, CheesyBody.velocity.y);
     }
 
     //Handles player's vertical state and allows jumping only when grounded, using physics-based AddForce(), called in FixedUpdate()
@@ -94,8 +120,29 @@ public class PlayerController : MonoBehaviour
                 PlayerState.Instance.Vertical = Vertical.Airborne;
                 CheesyBody.AddForce(new Vector2(0, 6), ForceMode2D.Impulse);
                 GetComponent<AudioSource>().Play();
+                startPos = transform.position;
             }
-            JumpActivated = false;
+
+            print(startPos.y - transform.position.y);
+            if (transform.position.y - startPos.y > .7)
+            {
+                JumpOver = true;
+                JumpActivated = false;
+            }
+        }
+        if (JumpOver)
+        {
+            float x = Mathf.Lerp(transform.position.x, moveTo, 0.05f * Time.deltaTime * 60);
+            transform.position = new Vector3(x, transform.position.y, transform.position.z);
+            print(transform.position.x - startPos.x);
+        }
+    }
+
+    public void OnCollisionEnter2D(Collision collision)
+    {
+        if(collision.gameObject.tag == "")
+        {
+
         }
     }
 }
