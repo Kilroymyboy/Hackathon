@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class hudManager : MonoBehaviour {
 
-    private string[] singleClause = new string[3]; 
+    private string[] singleClause = new string[3];
+    GameObject clause;
 
     //Make a queue of the prefab type
     //private Queue<T> clauses = new Queue<T>();
@@ -22,24 +24,30 @@ public class hudManager : MonoBehaviour {
     public void testClause()
     {
         Transform parent = GameObject.Find("Grid").transform;
-        GameObject clause = (GameObject)Instantiate(Resources.Load("Clause"), parent);
+        clause = (GameObject)Instantiate(Resources.Load("Clause"), parent);
 
-        if (singleClause[0].Equals("If"))
-        {
+        Text txt = clause.GetComponentInChildren<Text>();
 
-        }
-        else if (singleClause[0].Equals("Else"))
+        for (int i = 0; !(singleClause[i].Equals(null)) && i < 4; i++)
         {
-
+            if (singleClause[0].Equals("If"))
+            {
+                txt.text = singleClause[0] + " " + singleClause[1] + "\n" + "then " + singleClause[2];
+            }
+            else if (singleClause[0].Equals("Else"))
+            {
+                txt.text = singleClause[0] + " " + singleClause[1] + "\n" + "then " + singleClause[2];
+            }
+            else if (singleClause[0].Equals("While"))
+            {
+                txt.text = singleClause[0] + " " + singleClause[1] + "\n" + "do " + singleClause[2];
+            }
+            else
+            {
+                print("This is invalid input: " + singleClause[0]);
+            }
         }
-        else if (singleClause[0].Equals("While"))
-        {
-
-        }
-        else
-        {
-            print("This is invalid input: " + singleClause[0]);
-        }
+        
         // Take whatever is in the Clause array right now check it for format
         // and make it an obj then maybe queue it?
     }
@@ -63,5 +71,12 @@ public class hudManager : MonoBehaviour {
     public void addToClause(string word, int i)
     {
         this.singleClause[i] = word;
+    }
+
+
+    public void deleteClause()
+    {
+        //GameObject clone = (GameObject)Instantiate(clause, transform.position, Quaternion.identity);
+        Destroy((GameObject)Instantiate(clause, transform.position, Quaternion.identity));
     }
 }

@@ -80,6 +80,11 @@ public class buttonManager : MonoBehaviour {
         hud.addToClause("Climb", 2);
     }
 
+    public void onClickToDeleteClause()
+    {
+        hud.deleteClause();
+    }
+
 
     public void onNextLevelClick()
     {
