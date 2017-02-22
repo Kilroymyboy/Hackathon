@@ -36,7 +36,6 @@ public class PlayerState : MonoBehaviour
 public enum Horizontal
 {
     Idle = 0,
-    MovingLeft = -1,
     MovingRight = 1
 }
 
@@ -56,5 +55,4 @@ public enum Attack
 {
     Passive,
     Punch,
-    Projectile
 }

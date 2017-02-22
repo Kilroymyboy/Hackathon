@@ -19,6 +19,9 @@ public class PlayerController : MonoBehaviour
     //Stores if jump button is pressed in Update loop, then acts on it with a physics event in the FixedUpdate loop
     bool JumpActivated;
 
+    // tells the player where to move
+    float moveTo;
+
     //Used along with HorizontalMotion multiplier to create horizontal movement
     public static int MoveSpeed;
 
@@ -55,12 +58,11 @@ public class PlayerController : MonoBehaviour
         {
             HorizontalMotion = Input.GetAxisRaw("Horizontal");
 
-            if (HorizontalMotion != 0)
+            if (HorizontalMotion != 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight)
             {
-                //float x = Mathf.Lerp(transform.position.x, Player.transform.position.x + 2, 0.02f * Time.deltaTime * 60);
-
-                transform.localScale = new Vector3(HorizontalMotion, 1, 1);
                 PlayerState.Instance.DirectionFacing = (DirectionFacing)HorizontalMotion;
+                PlayerState.Instance.Horizontal = Horizontal.MovingRight;
+                moveTo = transform.position.x + 1;
             }
 
             if (Input.GetButtonDown("Jump"))
@@ -70,18 +72,36 @@ public class PlayerController : MonoBehaviour
         if (CheesyBody.velocity.y == 0 && PlayerState.Instance.Attack == Attack.Passive)
             PlayerState.Instance.Vertical = Vertical.Grounded;
 
-        Horizontal previousMotion = PlayerState.Instance.Horizontal;
-        Horizontal currentMotion = PlayerState.Instance.Horizontal = (Horizontal)HorizontalMotion;
+        //Horizontal previousMotion = PlayerState.Instance.Horizontal;
+        //Horizontal currentMotion = PlayerState.Instance.Horizontal = (Horizontal)HorizontalMotion;
 
         //Fixes an error with the camera following the player incorrectly if quickly changing direction while at the furthest possible positions at each side of the screen.
-        if ((int)previousMotion * (int)currentMotion == -1)
-            PlayerState.Instance.Horizontal = Horizontal.Idle;
-	}
+        //if ((int)previousMotion * (int)currentMotion == -1)
+            
+    }
 
     //Handles basic horizontal movement using physics-based velocity, called in FixedUpdate()
     private void WalkMotion()
     {
-        CheesyBody.velocity = new Vector2(HorizontalMotion * MoveSpeed, CheesyBody.velocity.y);
+        float prevPos = transform.position.x;
+
+        if (PlayerState.Instance.Horizontal == Horizontal.MovingRight)
+        {
+            float x = Mathf.Lerp(transform.position.x, moveTo, 0.05f * Time.deltaTime * 60);
+            transform.position = new Vector3(x, transform.position.y, transform.position.z);
+            print(PlayerState.Instance.Horizontal);
+        }
+
+        float currPos = transform.position.x;
+
+        print(System.Math.Round(currPos - prevPos,3));
+        if (System.Math.Round(currPos - prevPos, 3) < 0.002)
+        {
+            print("FKAJJJJJ");
+            PlayerState.Instance.Horizontal = Horizontal.Idle;
+        }
+
+        //CheesyBody.velocity = new Vector2(HorizontalMotion * MoveSpeed, CheesyBody.velocity.y);
     }
 
     //Handles player's vertical state and allows jumping only when grounded, using physics-based AddForce(), called in FixedUpdate()

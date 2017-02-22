@@ -27,7 +27,7 @@ public class CameraController : MonoBehaviour
     //Handles camera motion based on where the player is on the screen and the current state the camera is in
     void LateUpdate()
     {
-        float offset = Camera.main.orthographicSize * Camera.main.aspect / 4;
+        //float offset = Camera.main.orthographicSize * Camera.main.aspect / 4;
         Vector3 tempPos = Player.transform.position;
         Vector3 CheeseScreenPosition = Camera.main.WorldToViewportPoint(new Vector3(tempPos.x+4, tempPos.y, tempPos.z));
 

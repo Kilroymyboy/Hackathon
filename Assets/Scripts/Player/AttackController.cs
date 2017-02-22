@@ -41,9 +41,6 @@ public class AttackController : MonoBehaviour
 
 	void Update()
 	{
-        //Ternary which enables visibility of the "background" fist when using a projectile attack
-        GetComponentsInChildren<SpriteRenderer>()[1].enabled = (PlayerState.Instance.Attack == Attack.Projectile) ? true : false;
-
         //Handles initial conditions and state keeping of the punch attack (also prevents interrupting/cancelling the attack)
         if (Input.GetButtonDown("Punch") && PlayerState.Instance.Attack == Attack.Passive)
         {
