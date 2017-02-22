@@ -137,4 +137,12 @@ public class PlayerController : MonoBehaviour
             print(transform.position.x - startPos.x);
         }
     }
+
+    public void OnCollisionEnter2D(Collision collision)
+    {
+        if(collision.gameObject.tag == "")
+        {
+
+        }
+    }
 }
