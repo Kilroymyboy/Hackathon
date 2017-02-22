@@ -45,6 +45,14 @@ public class PlayerController : MonoBehaviour
     //Calls methods that handle physics-based movement
     void FixedUpdate()
     {
+
+        RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.4f),transform.position.y), Vector2.right);
+        if (hit.collider != null)
+        {
+            float distance = Mathf.Abs(hit.point.x - transform.position.x);
+            print(distance);
+        }
+
         WalkMotion();
         JumpMotion();
     }
