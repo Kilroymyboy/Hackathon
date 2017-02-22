@@ -45,6 +45,43 @@ public class PlayerController : MonoBehaviour
     //Calls methods that handle physics-based movement
     void FixedUpdate()
     {
+
+        RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.4f),transform.position.y), Vector2.right);
+        if (hit.collider != null)
+        {
+            float distance = Mathf.Abs(hit.point.x - transform.position.x);
+            Rigidbody2D rigBod = hit.rigidbody;
+
+            if (hit.collider.tag == "Box")
+            {
+               
+                //bool push = true;
+                
+                if (PlayerState.Instance.Attack == Attack.Punch)
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezeRotation;   
+                }
+                else
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+                
+                }
+            }
+            if (hit.collider.tag == "Tree")
+            {
+                
+                if (PlayerState.Instance.Attack == Attack.Punch)
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezeRotation;
+                }
+                else
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+                }
+                print(distance);
+            }
+        }
+
         WalkMotion();
         JumpMotion();
     }
