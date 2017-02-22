@@ -18,9 +18,13 @@ public class PlayerController : MonoBehaviour
 
     //Stores if jump button is pressed in Update loop, then acts on it with a physics event in the FixedUpdate loop
     bool JumpActivated;
+    bool JumpOver;
 
     // tells the player where to move
     float moveTo;
+
+    // gets start pos
+    Vector2 startPos;
 
     //Used along with HorizontalMotion multiplier to create horizontal movement
     public static int MoveSpeed;
@@ -66,7 +70,12 @@ public class PlayerController : MonoBehaviour
             }
 
             if (Input.GetButtonDown("Jump"))
+            {
                 JumpActivated = true;
+                moveTo = transform.position.x + 1;
+                JumpOver = false;
+            }
+
         }
 
         if (CheesyBody.velocity.y == 0 && PlayerState.Instance.Attack == Attack.Passive)
@@ -89,15 +98,12 @@ public class PlayerController : MonoBehaviour
         {
             float x = Mathf.Lerp(transform.position.x, moveTo, 0.05f * Time.deltaTime * 60);
             transform.position = new Vector3(x, transform.position.y, transform.position.z);
-            print(PlayerState.Instance.Horizontal);
         }
 
         float currPos = transform.position.x;
 
-        print(System.Math.Round(currPos - prevPos,3));
         if (System.Math.Round(currPos - prevPos, 3) < 0.002)
         {
-            print("FKAJJJJJ");
             PlayerState.Instance.Horizontal = Horizontal.Idle;
         }
 
@@ -114,8 +120,21 @@ public class PlayerController : MonoBehaviour
                 PlayerState.Instance.Vertical = Vertical.Airborne;
                 CheesyBody.AddForce(new Vector2(0, 6), ForceMode2D.Impulse);
                 GetComponent<AudioSource>().Play();
+                startPos = transform.position;
             }
-            JumpActivated = false;
+
+            print(startPos.y - transform.position.y);
+            if (transform.position.y - startPos.y > .7)
+            {
+                JumpOver = true;
+                JumpActivated = false;
+            }
+        }
+        if (JumpOver)
+        {
+            float x = Mathf.Lerp(transform.position.x, moveTo, 0.05f * Time.deltaTime * 60);
+            transform.position = new Vector3(x, transform.position.y, transform.position.z);
+            print(transform.position.x - startPos.x);
         }
     }
 }
