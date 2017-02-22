@@ -28,20 +28,22 @@ public class CameraController : MonoBehaviour
     void LateUpdate()
     {
         float offset = Camera.main.orthographicSize * Camera.main.aspect / 4;
-        Vector3 tempPos = Player.transform.position;
-        Vector3 CheeseScreenPosition = Camera.main.WorldToViewportPoint(new Vector3(tempPos.x+4, tempPos.y, tempPos.z));
+        Vector3 CheeseScreenPosition = Camera.main.WorldToViewportPoint(Player.transform.position);
 
-        if (CheeseScreenPosition.x < 0.34f || CheeseScreenPosition.x > 1.0f)
+        if (CheeseScreenPosition.x < 0.34f || CheeseScreenPosition.x > 1f)
+            CameraState = CameraState.Following;
+
+        if (CameraState == CameraState.Following && PlayerState.Instance.Horizontal == Horizontal.Idle)
             CameraState = CameraState.Recentering;
+        else if (CameraState == CameraState.Following)
+            transform.position = new Vector3(Player.transform.position.x - offset * (int)PlayerState.Instance.DirectionFacing, transform.position.y, transform.position.z);
 
         if (CameraState == CameraState.Recentering)
         {
-            float x = Mathf.Lerp(transform.position.x, Player.transform.position.x+2, 0.02f * Time.deltaTime * 60);
+            float x = Mathf.Lerp(transform.position.x, Player.transform.position.x, 0.02f * Time.deltaTime * 60);
             transform.position = new Vector3(x, transform.position.y, transform.position.z);
 
-
-            print(Math.Round(CheeseScreenPosition.x, 2).ToString());
-            if (Math.Round(CheeseScreenPosition.x, 2) <= 0.67)
+            if (Math.Round(CheeseScreenPosition.x, 1) == 0.5f)
                 CameraState = CameraState.Stationary;
         }
 	}
@@ -50,5 +52,6 @@ public class CameraController : MonoBehaviour
 public enum CameraState
 {
     Stationary,
+    Following,
     Recentering
 }
