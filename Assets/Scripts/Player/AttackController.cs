@@ -101,6 +101,6 @@ public class AttackController : MonoBehaviour
     //Detects collision between player's fist and enemy, awards points and adds force to the enemy accordingly
     void OnCollisionEnter2D(Collision2D coll)
     {
-
+        coll.rigidbody.AddForce(new Vector2(8, 0), ForceMode2D.Impulse);
     }
 }
