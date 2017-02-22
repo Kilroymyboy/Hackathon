@@ -45,14 +45,47 @@ public class PlayerController : MonoBehaviour
     //Calls methods that handle physics-based movement
     void FixedUpdate()
     {
-
-        RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.4f),transform.position.y), Vector2.right);
+        /*
+        RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.3f), transform.position.y), new Vector2(1, 0));
         if (hit.collider != null)
         {
             float distance = Mathf.Abs(hit.point.x - transform.position.x);
-            print(distance);
-        }
+            Rigidbody2D rigBod = hit.rigidbody;
 
+            if (hit.collider.tag == "Box")
+            {
+
+                //bool push = true;
+
+                if (PlayerState.Instance.Attack == Attack.Punch)
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezeRotation;
+                }
+                else
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+
+                }
+                print(distance);
+            }
+            else if (hit.collider.tag == "Tree")
+            {
+
+                if (PlayerState.Instance.Attack == Attack.Punch)
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
+                    rigBod.rotation = -60;
+                    //Destroy(rigBod);
+                }
+                else
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+                }
+                print(distance);
+
+            }
+        }
+        */
         WalkMotion();
         JumpMotion();
     }
@@ -70,17 +103,17 @@ public class PlayerController : MonoBehaviour
         {
             HorizontalMotion = Input.GetAxisRaw("Horizontal");
 
-            if (HorizontalMotion != 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight)
+            if (HorizontalMotion != 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight && PlayerState.Instance.Vertical != Vertical.Airborne)
             {
                 PlayerState.Instance.DirectionFacing = (DirectionFacing)HorizontalMotion;
                 PlayerState.Instance.Horizontal = Horizontal.MovingRight;
-                moveTo = transform.position.x + 1;
+                moveTo = transform.position.x + 1.01f;
             }
 
-            if (Input.GetButtonDown("Jump"))
+            if (Input.GetButtonDown("Jump") && PlayerState.Instance.Vertical != Vertical.Airborne && PlayerState.Instance.Horizontal != Horizontal.MovingRight)
             {
                 JumpActivated = true;
-                moveTo = transform.position.x + 1;
+                moveTo = transform.position.x + 1.0f;
                 JumpOver = false;
             }
 
@@ -93,8 +126,7 @@ public class PlayerController : MonoBehaviour
         //Horizontal currentMotion = PlayerState.Instance.Horizontal = (Horizontal)HorizontalMotion;
 
         //Fixes an error with the camera following the player incorrectly if quickly changing direction while at the furthest possible positions at each side of the screen.
-        //if ((int)previousMotion * (int)currentMotion == -1)
-            
+        //if ((int)previousMotion * (int)currentMotion == -1)  
     }
 
     //Handles basic horizontal movement using physics-based velocity, called in FixedUpdate()
@@ -126,12 +158,11 @@ public class PlayerController : MonoBehaviour
             if (PlayerState.Instance.Vertical == Vertical.Grounded)
             {
                 PlayerState.Instance.Vertical = Vertical.Airborne;
-                CheesyBody.AddForce(new Vector2(0, 6), ForceMode2D.Impulse);
+                CheesyBody.AddForce(new Vector2(0, 8), ForceMode2D.Impulse);
                 GetComponent<AudioSource>().Play();
                 startPos = transform.position;
             }
 
-            print(startPos.y - transform.position.y);
             if (transform.position.y - startPos.y > .7)
             {
                 JumpOver = true;
@@ -142,7 +173,6 @@ public class PlayerController : MonoBehaviour
         {
             float x = Mathf.Lerp(transform.position.x, moveTo, 0.05f * Time.deltaTime * 60);
             transform.position = new Vector3(x, transform.position.y, transform.position.z);
-            print(transform.position.x - startPos.x);
         }
     }
 

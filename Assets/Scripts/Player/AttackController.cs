@@ -35,7 +35,7 @@ public class AttackController : MonoBehaviour
     void Start()
     {
         PunchMotion = Mathf.Infinity;
-        AttackPause = 1;
+        AttackPause = 0.5f;
         Accumulator = 0.02f;
     }
 
@@ -101,6 +101,39 @@ public class AttackController : MonoBehaviour
     //Detects collision between player's fist and enemy, awards points and adds force to the enemy accordingly
     void OnCollisionEnter2D(Collision2D coll)
     {
+        
+
+      //  RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.3f), transform.position.y), new Vector2(1, 0));
+        if (coll != null)
+        {
+          //  float distance = Mathf.Abs(coll.point.x - transform.position.x);
+            Rigidbody2D rigBod = coll.rigidbody;
+
+            if (coll.collider.tag == "Box")
+            {
+                if (PlayerState.Instance.Attack == Attack.Punch)
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.None | RigidbodyConstraints2D.FreezeRotation;
+                    coll.rigidbody.AddForce(new Vector2(2.0f, 0.0f), ForceMode2D.Impulse);
+                }
+              
+            }
+            else if (coll.collider.tag == "Tree")
+            {
+
+                if (PlayerState.Instance.Attack == Attack.Punch)
+                {
+                    rigBod.constraints = RigidbodyConstraints2D.None;// | RigidbodyConstraints2D.FreezeRotation;
+                    coll.collider.enabled = false;
+                    coll.rigidbody.AddForce(new Vector2(10.0f, 0.0f), ForceMode2D.Impulse);
+                    rigBod.rotation = -70;
+                   
+                }
+            
+
+            }
+        }
+
 
     }
 }
