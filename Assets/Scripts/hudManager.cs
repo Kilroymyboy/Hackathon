@@ -5,6 +5,7 @@ using UnityEngine;
 public class hudManager : MonoBehaviour {
 
     private string[] singleClause = new string[3];
+    public Transform clause;
 
     //Make a queue of the prefab type
     //private Queue<T> clauses = new Queue<T>();
@@ -23,6 +24,12 @@ public class hudManager : MonoBehaviour {
     {
         // Take whatever is in the Clause array right now check it for format
         // and make it an obj then maybe queue it?
+        Transform parent = GameObject.Find("Grid").transform;
+        GameObject clause = (GameObject)Instantiate(Resources.Load("Clause"), parent);
+        //GameObject clause = Instantiate(Resources.Load("Clause", typeof(GameObject))) as GameObject;
+        //Instantiate(clause, parent.position, Quaternion.identity);
+        //Resources.LoadAsync
+
     }
 
     public void clearClause()
