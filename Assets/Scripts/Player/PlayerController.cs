@@ -29,8 +29,16 @@ public class PlayerController : MonoBehaviour
     //Used along with HorizontalMotion multiplier to create horizontal movement
     public static int MoveSpeed;
 
-	void Start()
-	{
+    private CommandRunner cmd;
+    private int i = 1;
+    private System.Collections.Generic.List<string[]> str;
+
+    void Start()
+    {
+        string[] strArr = { "IF Nothing Walk", "IF Box Push"};
+        cmd = new CommandRunner(strArr);
+        str = cmd.getCommands();
+
         HorizontalMotion = 0;
         MoveSpeed = 3;
 
@@ -45,6 +53,18 @@ public class PlayerController : MonoBehaviour
     //Calls methods that handle physics-based movement
     void FixedUpdate()
     {
+
+            
+
+        if (i >= 0 && PlayerState.Instance.Horizontal == Horizontal.Idle && PlayerState.Instance.Vertical == Vertical.Grounded)
+        {
+            HorizontalMotion = 0;
+            print(str[i][0]);
+            print(PlayerState.Instance.Attack);
+            cmd.callCommand(str[i]);
+            i--;
+        }
+        
         /*
         RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.3f), transform.position.y), new Vector2(1, 0));
         if (hit.collider != null)
@@ -88,6 +108,7 @@ public class PlayerController : MonoBehaviour
         */
         WalkMotion();
         JumpMotion();
+        
     }
 
     //Used to detect player inputs and set parameters & players states for physics behaviour that occurs in FixedUpdate()
@@ -150,6 +171,18 @@ public class PlayerController : MonoBehaviour
         //CheesyBody.velocity = new Vector2(HorizontalMotion * MoveSpeed, CheesyBody.velocity.y);
     }
 
+    private void WalkMotion2()
+    {
+        if (HorizontalMotion == 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight && PlayerState.Instance.Vertical != Vertical.Airborne)
+        {
+            PlayerState.Instance.DirectionFacing = (DirectionFacing)HorizontalMotion;
+            PlayerState.Instance.Horizontal = Horizontal.MovingRight;
+            moveTo = transform.position.x + 1.01f;
+        }
+
+        //CheesyBody.velocity = new Vector2(HorizontalMotion * MoveSpeed, CheesyBody.velocity.y);
+    }
+
     //Handles player's vertical state and allows jumping only when grounded, using physics-based AddForce(), called in FixedUpdate()
     private void JumpMotion()
     {
@@ -176,11 +209,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void OnCollisionEnter2D(Collision collision)
+    private void JumpMotion2()
     {
-        if(collision.gameObject.tag == "")
+        if (PlayerState.Instance.Vertical != Vertical.Airborne && PlayerState.Instance.Horizontal != Horizontal.MovingRight)
         {
-
+            JumpActivated = true;
+            moveTo = transform.position.x + 1.0f;
+            JumpOver = false;
         }
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+
     }
 }

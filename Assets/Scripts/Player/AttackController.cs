@@ -98,6 +98,21 @@ public class AttackController : MonoBehaviour
         }
 	}
 
+    private void punchMotion2()
+    {
+
+        if (PlayerState.Instance.Attack == Attack.Passive)
+        {
+            print("attack");
+            PlayerState.Instance.Attack = Attack.Punch;
+            StartingPunchPosition = Player.transform.position.x;
+            EndingPunchPosition = StartingPunchPosition + (int)PlayerState.Instance.DirectionFacing * 0.7f;
+
+            MaxPause = 10;
+            GetComponents<AudioSource>()[0].Play();
+        }
+    }
+
     //Detects collision between player's fist and enemy, awards points and adds force to the enemy accordingly
     void OnCollisionEnter2D(Collision2D coll)
     {
