@@ -103,7 +103,6 @@ public class AttackController : MonoBehaviour
 
         if (PlayerState.Instance.Attack == Attack.Passive)
         {
-            print("attack");
             PlayerState.Instance.Attack = Attack.Punch;
             StartingPunchPosition = Player.transform.position.x;
             EndingPunchPosition = StartingPunchPosition + (int)PlayerState.Instance.DirectionFacing * 0.7f;
@@ -116,10 +115,7 @@ public class AttackController : MonoBehaviour
     //Detects collision between player's fist and enemy, awards points and adds force to the enemy accordingly
     void OnCollisionEnter2D(Collision2D coll)
     {
-        
-
-      //  RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.3f), transform.position.y), new Vector2(1, 0));
-        if (coll != null)
+         if (coll != null)
         {
           //  float distance = Mathf.Abs(coll.point.x - transform.position.x);
             Rigidbody2D rigBod = coll.rigidbody;
@@ -144,11 +140,7 @@ public class AttackController : MonoBehaviour
                     rigBod.rotation = -70;
                    
                 }
-            
-
             }
         }
-
-
     }
 }
