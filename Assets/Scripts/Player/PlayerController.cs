@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 #region - Script Synopsis
 /*
@@ -36,10 +37,19 @@ public class PlayerController : MonoBehaviour
     private int i = 0;
     private System.Collections.Generic.List<string[]> str;
 
-    private string[] strArr = {"IF Nothing Walk", "IF Nothing Walk", "IF Box Push", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Box Push", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Stairs Climb", "IF Stairs Climb", "IF Stairs Climb", "IF Nothing Walk" };
+    private string[] strArr = {"IF Nothing Walk", "IF Box Push", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Tree Chop", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk","IF Stairs Climb", "IF Stairs Climb", "IF Stairs Climb" , "IF Nothing Walk" };
+
     void Start()
     {
-         
+        string concat = "";
+        foreach(string temp in strArr)
+        {
+            concat = concat + "," + temp;
+        }
+
+        Regex solution = new Regex("[(IF Nothing Walk),]+(IF Box Push),(IF Nothing Walk),[(IF Nothing Walk),]+(IF Tree Chop),(IF Nothing Walk),(IF Nothing Walk),(IF Nothing Walk),[(IF Nothing Walk),]()()()");
+        print(solution.Match(concat).Success);
+
         cmd = new CommandRunner(strArr);
         str = cmd.getCommands();
 
