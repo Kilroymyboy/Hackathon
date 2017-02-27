@@ -29,8 +29,20 @@ public class PlayerController : MonoBehaviour
     //Used along with HorizontalMotion multiplier to create horizontal movement
     public static int MoveSpeed;
 
-	void Start()
-	{
+    // used for runnin into walls
+    RaycastHit2D hit;
+
+    private CommandRunner cmd;
+    private int i = 0;
+    private System.Collections.Generic.List<string[]> str;
+
+    private string[] strArr = {"IF Nothing Walk", "IF Nothing Walk", "IF Box Push", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Box Push", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Nothing Walk", "IF Stairs Climb", "IF Stairs Climb", "IF Stairs Climb", "IF Nothing Walk" };
+    void Start()
+    {
+         
+        cmd = new CommandRunner(strArr);
+        str = cmd.getCommands();
+
         HorizontalMotion = 0;
         MoveSpeed = 3;
 
@@ -40,84 +52,26 @@ public class PlayerController : MonoBehaviour
         PlayerState.Instance.Vertical = Vertical.Airborne;
         PlayerState.Instance.DirectionFacing = DirectionFacing.Right;
         PlayerState.Instance.Attack = Attack.Passive;
-	}
+    }
 
     //Calls methods that handle physics-based movement
     void FixedUpdate()
     {
-        /*
-        RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.3f), transform.position.y), new Vector2(1, 0));
-        if (hit.collider != null)
+
+        if (i < strArr.Length && PlayerState.Instance.Horizontal == Horizontal.Idle && PlayerState.Instance.Vertical == Vertical.Grounded && PlayerState.Instance.Attack == Attack.Passive)
         {
-            float distance = Mathf.Abs(hit.point.x - transform.position.x);
-            Rigidbody2D rigBod = hit.rigidbody;
-
-            if (hit.collider.tag == "Box")
-            {
-
-                //bool push = true;
-
-                if (PlayerState.Instance.Attack == Attack.Punch)
-                {
-                    rigBod.constraints = RigidbodyConstraints2D.FreezeRotation;
-                }
-                else
-                {
-                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
-
-                }
-                print(distance);
-            }
-            else if (hit.collider.tag == "Tree")
-            {
-
-                if (PlayerState.Instance.Attack == Attack.Punch)
-                {
-                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
-                    rigBod.rotation = -60;
-                    //Destroy(rigBod);
-                }
-                else
-                {
-                    rigBod.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
-                }
-                print(distance);
-
-            }
+            cmd.callCommand(str[i]);
+            i++;
         }
-        */
         WalkMotion();
         JumpMotion();
+        
     }
 
     //Used to detect player inputs and set parameters & players states for physics behaviour that occurs in FixedUpdate()
 	void Update()
 	{
-        //Allow player movement only when not attacking
-        if (PlayerState.Instance.Attack != Attack.Passive)
-        {
-            CheesyBody.velocity = new Vector2(0, 0.1f);
-            HorizontalMotion = 0;
-        }
-        else
-        {
-            HorizontalMotion = Input.GetAxisRaw("Horizontal");
 
-            if (HorizontalMotion != 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight && PlayerState.Instance.Vertical != Vertical.Airborne)
-            {
-                PlayerState.Instance.DirectionFacing = (DirectionFacing)HorizontalMotion;
-                PlayerState.Instance.Horizontal = Horizontal.MovingRight;
-                moveTo = transform.position.x + 1.01f;
-            }
-
-            if (Input.GetButtonDown("Jump") && PlayerState.Instance.Vertical != Vertical.Airborne && PlayerState.Instance.Horizontal != Horizontal.MovingRight)
-            {
-                JumpActivated = true;
-                moveTo = transform.position.x + 1.0f;
-                JumpOver = false;
-            }
-
-        }
 
         if (CheesyBody.velocity.y == 0 && PlayerState.Instance.Attack == Attack.Passive)
             PlayerState.Instance.Vertical = Vertical.Grounded;
@@ -133,6 +87,8 @@ public class PlayerController : MonoBehaviour
     private void WalkMotion()
     {
         float prevPos = transform.position.x;
+        RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.3f), transform.position.y), new Vector2(1, 0));
+
 
         if (PlayerState.Instance.Horizontal == Horizontal.MovingRight)
         {
@@ -146,6 +102,26 @@ public class PlayerController : MonoBehaviour
         {
             PlayerState.Instance.Horizontal = Horizontal.Idle;
         }
+        
+        if (PlayerState.Instance.Vertical != Vertical.Airborne && hit.collider.tag != "Fist" && hit.distance == 0.0f)
+        {
+            transform.position = startPos;
+
+            PlayerState.Instance.Horizontal = Horizontal.Idle;
+        }
+
+        //CheesyBody.velocity = new Vector2(HorizontalMotion * MoveSpeed, CheesyBody.velocity.y);
+    }
+
+    private void WalkMotion2()
+    {
+        startPos = transform.position;
+        if (HorizontalMotion == 0 && PlayerState.Instance.Horizontal != Horizontal.MovingRight && PlayerState.Instance.Vertical != Vertical.Airborne)
+        {
+            PlayerState.Instance.DirectionFacing = (DirectionFacing)1.0f;
+            PlayerState.Instance.Horizontal = Horizontal.MovingRight;
+            moveTo = transform.position.x + 1.01f;
+        }
 
         //CheesyBody.velocity = new Vector2(HorizontalMotion * MoveSpeed, CheesyBody.velocity.y);
     }
@@ -153,6 +129,7 @@ public class PlayerController : MonoBehaviour
     //Handles player's vertical state and allows jumping only when grounded, using physics-based AddForce(), called in FixedUpdate()
     private void JumpMotion()
     {
+
         if (JumpActivated)
         {
             if (PlayerState.Instance.Vertical == Vertical.Grounded)
@@ -160,10 +137,9 @@ public class PlayerController : MonoBehaviour
                 PlayerState.Instance.Vertical = Vertical.Airborne;
                 CheesyBody.AddForce(new Vector2(0, 8), ForceMode2D.Impulse);
                 GetComponent<AudioSource>().Play();
-                startPos = transform.position;
             }
 
-            if (transform.position.y - startPos.y > .7)
+            if (transform.position.y - startPos.y > .9)
             {
                 JumpOver = true;
                 JumpActivated = false;
@@ -176,11 +152,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void OnCollisionEnter2D(Collision collision)
-    {
-        if(collision.gameObject.tag == "")
-        {
 
+    private void JumpMotion2()
+    {
+        if (PlayerState.Instance.Vertical != Vertical.Airborne && PlayerState.Instance.Horizontal != Horizontal.MovingRight)
+        {
+            JumpActivated = true;
+            moveTo = transform.position.x + 1.0f;
+            JumpOver = false;
         }
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+
     }
 }

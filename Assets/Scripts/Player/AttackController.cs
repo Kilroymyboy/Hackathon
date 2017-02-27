@@ -41,16 +41,6 @@ public class AttackController : MonoBehaviour
 
 	void Update()
 	{
-        //Handles initial conditions and state keeping of the punch attack (also prevents interrupting/cancelling the attack)
-        if (Input.GetButtonDown("Punch") && PlayerState.Instance.Attack == Attack.Passive)
-        {
-            PlayerState.Instance.Attack = Attack.Punch;
-            StartingPunchPosition = Player.transform.position.x;
-            EndingPunchPosition = StartingPunchPosition + (int)PlayerState.Instance.DirectionFacing * 0.7f;
-
-            MaxPause = 10;
-            GetComponents<AudioSource>()[0].Play();
-        }
 
         //Handles the rest of the attack determined in the if...else if() above, playing out the attack according to the initial conditions set
         if (PlayerState.Instance.Attack == Attack.Punch)
@@ -98,13 +88,24 @@ public class AttackController : MonoBehaviour
         }
 	}
 
+    private void punchMotion2()
+    {
+
+        if (PlayerState.Instance.Attack == Attack.Passive)
+        {
+            PlayerState.Instance.Attack = Attack.Punch;
+            StartingPunchPosition = Player.transform.position.x;
+            EndingPunchPosition = StartingPunchPosition + (int)PlayerState.Instance.DirectionFacing * 0.7f;
+
+            MaxPause = 10;
+            GetComponents<AudioSource>()[0].Play();
+        }
+    }
+
     //Detects collision between player's fist and enemy, awards points and adds force to the enemy accordingly
     void OnCollisionEnter2D(Collision2D coll)
     {
-        
-
-      //  RaycastHit2D hit = Physics2D.Raycast(new Vector2((transform.position.x + 0.3f), transform.position.y), new Vector2(1, 0));
-        if (coll != null)
+         if (coll != null)
         {
           //  float distance = Mathf.Abs(coll.point.x - transform.position.x);
             Rigidbody2D rigBod = coll.rigidbody;
@@ -129,11 +130,7 @@ public class AttackController : MonoBehaviour
                     rigBod.rotation = -70;
                    
                 }
-            
-
             }
         }
-
-
     }
 }

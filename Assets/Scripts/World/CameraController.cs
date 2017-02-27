@@ -18,17 +18,22 @@ public class CameraController : MonoBehaviour
 
     //Stores an exclusive CameraState for moving the camera accordingly
     public CameraState CameraState;
+
+    //start camera Pos
+    private float cameraOrigin;
     
 	void Start()
 	{
         CameraState = CameraState.Stationary;
-	}
+        cameraOrigin = -3.279999f;
+    }
 
     //Handles camera motion based on where the player is on the screen and the current state the camera is in
     void LateUpdate()
     {
         //float offset = Camera.main.orthographicSize * Camera.main.aspect / 4;
         Vector3 tempPos = Player.transform.position;
+        
         Vector3 CheeseScreenPosition = Camera.main.WorldToViewportPoint(new Vector3(tempPos.x+4, tempPos.y, tempPos.z));
 
         if (CheeseScreenPosition.x < 0.34f || CheeseScreenPosition.x > 1.0f)
@@ -42,7 +47,23 @@ public class CameraController : MonoBehaviour
             if (Math.Round(CheeseScreenPosition.x, 2) <= 0.67)
                 CameraState = CameraState.Stationary;
         }
-	}
+
+   
+
+        if(CheeseScreenPosition.y > 0.8)
+        {
+
+            float y = Mathf.Lerp(transform.position.y, cameraOrigin + 1.0f, 0.05f * Time.deltaTime * 60);
+            System.Math.Round(y, 1);
+            transform.position = new Vector3(transform.position.x, y, transform.position.z);
+            //transform.position = cameraOrigin + new Vector3(0, 0.5f, 0);
+        }
+        else
+        {
+            float y = Mathf.Lerp(transform.position.y, cameraOrigin, 0.05f * Time.deltaTime * 60);
+            transform.position = new Vector3(transform.position.x, y, transform.position.z);
+        }
+    }
 }
 
 public enum CameraState
